@@ -1,5 +1,4 @@
 # Raspberry
-First upload
 
 Many little projets to discover Raspberry capabilities
 
