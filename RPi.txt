@@ -32,7 +32,7 @@ update_config=1
 
 network={
 	ssid="LM_640_LM"
-	psk="4+C7560v"
+	psk=« xxx »
 }
 
 
