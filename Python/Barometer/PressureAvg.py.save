@@ -1,0 +1,42 @@
+
+#!/usr/bin/env python
+import time
+import math
+from collections import deque
+import numpy
+# global variables
+speriod=1
+avgnumber=10 
+alt=150
+# get Pressure returns the Pressure as a float, compensated to sea level
+def get_press(altitude):
+ # enable SenseHat modules
+    from sense_hat import SenseHat
+    
+    sense=SenseHat()
+    raw_pressure = sense.get_pressure()
+    pressure = raw_pressure/math.pow(1 - 0.0065*altitude/288.15,5.25588)
+    #print(pressure)
+    return pressure
+# main function This is where the program starts
+def main():
+#init avgnumber-1 values
+table=get_presse(150) i=1
+    while i<avgnumber:
+    table.append(get_press(150))
+    i=i+1
+    while True:
+    # get the pressure from SenseHat and Store it
+        table.append(get_press(150))
+        pressure=numpy.mean(table)
+        if pressure != None:
+            print "Pressure="+str(pressure)            #log_pressure(pressure)
+        else:
+            print "Error getting Pressure"
+        table.popleft()
+        # Store the temperature in the database
+    
+        # display the contents of the database
+#        display_data()
+        time.sleep(speriod) if __name__=="__main__":
+    main()

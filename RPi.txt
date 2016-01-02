@@ -1,0 +1,50 @@
+## edition dans le Terminal:
+
+>sudo nano nom_de_fichier
+
+ctrl X / Y / Entrée pour sauver
+
+
+
+### configuration IP
+
+# fichier /etc/network/interfaces:
+
+auto lo
+auto wlan0
+
+iface lo inet loopback
+iface eth0 inet static
+address 169.254.0.1
+netmask 255.255.0.0
+
+allow-hotplug wlan0
+iface wlan0 inet manual
+wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+
+iface default inet dhcp
+
+
+# fichier Wifi: /etc/wpa_supplicant/wpa_supplicant.conf
+
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={
+	ssid="LM_640_LM"
+	psk="4+C7560v"
+}
+
+
+
+### bureau à distance VNC
+https://www.raspberrypi.org/documentation/remote-access/vnc/README.md
+
+
+
+
+### Partage de fichier: installer & configurer Samba
+http://raspberrywebserver.com/serveradmin/share-your-raspberry-pis-files-and-folders-across-a-network.html
+
+
+
