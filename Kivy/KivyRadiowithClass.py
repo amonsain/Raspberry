@@ -19,12 +19,19 @@ class MainLayout(BoxLayout):
 
 class RadioButton(ToggleButton):
 	icon = StringProperty(None)
-	RadioBox = BoxLayout()
 	def __init__(self,station='',*args,**kwargs):
 		super(RadioButton,self).__init__(*args,**kwargs)
 		self.station = station
 		self.icon = 'playbuttonwhite.png'
 		self.group='Station'
+		radiobox = BoxLayout()
+		radiobuttonlabel = Label()
+		radiobuttonimage = image()
+		radiobox.add_widget(radiobuttonlabel)
+		radiobox.add_widget(radiobuttonimage)	
+		self.add_widget(radiobox)
+
+
 	def on_press(self):
 		print('press Station ' + str(self.station))
 		if self.state == 'normal':
