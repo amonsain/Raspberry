@@ -59,13 +59,18 @@ class RadioButton(ToggleButton):
 		self.stationname = stationname
 		self.group='Station'
 
+
+
 		with self.canvas.after:
 			self.radiobox = BoxLayout(orientation='horizontal')
 			self.radiobuttonlabel = Label(font_size=40,size_hint=[0.8,1])
-			self.radiobuttonimage = Image(source='playbuttonwhite.png',size_hint=[0.2,1])			
+			self.radiobuttonimage = Image(source='./images/playbuttonwhite.png',size_hint=[0.2,1])			
 			self.radiobox.add_widget(self.radiobuttonlabel)
 			self.radiobox.add_widget(self.radiobuttonimage)	
 			self.add_widget(self.radiobox)
+			self.background_normal = ''
+			self.background_down = ''
+			self.background_color = [1,1,1,1]
 
 		self.bind(pos=self.update_radiobox,size=self.update_radiobox)
 		self.bind(state=self.update_state)
@@ -75,11 +80,12 @@ class RadioButton(ToggleButton):
 		self.radiobox.size = self.size
 		self.radiobuttonlabel.text = str(self.stationname)
 
+
 	def update_state(self,*args):
 		print('update state')
 		if self.state == 'normal':
-			self.radiobuttonimage.source = 'playbuttonwhite.png'
-		else: self.radiobuttonimage.source  = 'whitepause.png'
+			self.radiobuttonimage.source = './images/playbuttonwhite.png'
+		else: self.radiobuttonimage.source  = './images/whitepause.png'
 
 	def on_press(self):
 		print('press Station ' + str(self.stationid))
