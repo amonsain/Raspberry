@@ -20,6 +20,7 @@ import json
 import datetime
 
 # Clock Example for data update http://stackoverflow.com/questions/18923321/making-a-clock-in-kivy
+# http://stackoverflow.com/questions/27213545/update-properties-of-a-kivy-widget-while-running-code
 # ***** Functions *********
 MBurl='http://my.meteoblue.com/dataApi/dispatch.pl?apikey=41f2dd49fb6a&mac=feed&type=json_7day_3h_firstday&lat=43.5&lon=1.4133&asl=150&tz=Europe%2FZurich&city=Toulouse'
 
@@ -71,31 +72,22 @@ class DailyData(object):
 	self.updatetime = updatetime
 
 
-class Daytemp(Label):
-    def __init__(self,index, **kwargs):
-        super(Daytemp, self).__init__(**kwargs)
-        self.bind(pos=self.updatetemp)
-        self.bind(size=self.updatetemp)
-        self.index=index
-
-
 class KivyWeatherApp(App):
-	DayWeatherList = ListProperty()
-	DayWeatherList = get_daily_weather(MBurl)
-	print('Hello picto' + str(DayWeatherList[1].Picto))
 
-	def increase(*arg):
+
+	def increase(self,*arg):
 		print('updating')
-		DayWeatherList = get_daily_weather(MBurl)
-		#DayWeatherList[1].ForecastMaxTemp = DayWeatherList[1].ForecastMaxTemp +1
-		return 'oj'
+		self.DayWeatherList = get_daily_weather(MBurl)
+		self.mainlayout.do_layout()
+
 
 	def build(self):
-		mainlayout = MainLayout()
-		inspector.create_inspector(Window, mainlayout)
+		self.DayWeatherList = get_daily_weather(MBurl)
+		self.mainlayout = MainLayout()
+		inspector.create_inspector(Window, self.mainlayout)
 		Clock.schedule_interval(self.increase, 1)
 
-		return mainlayout
+		return self.mainlayout
 
 
 
