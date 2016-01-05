@@ -1,6 +1,8 @@
 
 <MainLayout>:
-	orientation: 'horizontal'
-	Label:
-		text: 'Meteo'
-		color:[1,1,1,1]
+    orientation: 'horizontal'
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint:0.8,0.9
+        Label:
+        	text: 'Temperature Max Jour 1: ' + str(app.DayWeatherList[1].updatetime) + '°C'
