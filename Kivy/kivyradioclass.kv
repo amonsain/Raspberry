@@ -6,41 +6,24 @@
         orientation: 'vertical'
         size_hint:0.8,0.9
         RadioButton:
-            station: 1
-            on_press: app.toggle_radio(self.state,self.station)
-            on_state: print('state')
-            BoxLayout:
-                pos: self.parent.pos
-                size: self.parent.size
-                orientation: 'horizontal'
-                Label:
-                    font_size: 40
-                    width:100
-                    text: 'Station 1'
-                    color:[1,1,1,1]
-                Image:
-                    size_hint: 0.2,0.8
-                    pos_hint: {'right': 1, 'center_y': .5}                    
-                    source: self.parent.parent.icon
+            stationid: 1
+            stationname:'Station 1'
+            background_color:[0.85,0.15,0.3,1]      
         RadioButton:
-            text:'Station 2'
-            station: 2
-            on_press: app.toggle_radio(self.state,self.station)
+            stationname:'Station 2'
+            stationid: 2
+            background_color:[0.35,0.15,0.85,1]
         RadioButton:
-            text:'Station 3'
-            station: 3
-            on_press: app.toggle_radio(self.state,self.station)
+            stationname:'Station 3'
+            stationid: 3
+            background_color:[0.35,0.85,0.15,1]    
     BoxLayout:
         orientation:'vertical'
         size_hint:0.2,0.9
-        Slider:
+        VolumeSlider:
             id: VolumeSlider
             orientation:'vertical'
-            value:25
-            step:5
-            text:'Hello'
             size_hint:1,0.85
-            on_value:app.change_volume(int(self.value))
         Label:
             text: 'Volume %s' % int(VolumeSlider.value) if VolumeSlider.value else 'Off'
             size_hint:1,0.15
