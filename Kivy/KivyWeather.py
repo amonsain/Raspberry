@@ -30,28 +30,25 @@ def get_daily_weather(url):
 # Fetch URL, parse & return a list of DaylyData objects
  
   #retour_api_meteo = urllib.request.urlopen(url)  --- only for Python3
-	#retour_api_meteo = urllib.urlopen(url)
-	#Json_string = retour_api_meteo.read().decode('utf-8')
-	#Json_decoded = json.loads(Json_string)
+
+	retour_api_meteo = urllib.urlopen(url)
+	Json_string = retour_api_meteo.read().decode('utf-8')
+	Json_decoded = json.loads(Json_string)
+
 # Get Weather data from Json structure
 	updatetime = time = datetime.datetime.now()
 	daylyforecastlist = []
-	#for i in range(0,len(Json_decoded['forecast'])):
-	for i in range(0,4):
-		ForecastMaxTemp = 'A'+str(i)
-		ForecastMinTemp = 'B'+str(i)
-		Picto = 'C'+str(i)
-		# ForecastMaxTemp = json.dumps(Json_decoded['forecast'][i]['temperature_max'])
-		# ForecastMinTemp = json.dumps(Json_decoded['forecast'][i]['temperature_min'])
-		# Picto = int(json.dumps(Json_decoded['forecast'][i]['pictocode_day']))
-		i = DailyData(str(updatetime)+str(i),ForecastMaxTemp,ForecastMinTemp,Picto)
+	for i in range(0,len(Json_decoded['forecast'])):
+		# ForecastMaxTemp = 'A'+str(i)
+		# ForecastMinTemp = 'B'+str(i)
+		# Picto = 'C'+str(i)
+		# Date = str(i)
+		ForecastMaxTemp = json.dumps(Json_decoded['forecast'][i]['temperature_max'])
+		ForecastMinTemp = json.dumps(Json_decoded['forecast'][i]['temperature_min'])
+		Picto = int(json.dumps(Json_decoded['forecast'][i]['pictocode_day']))
+		Date = str(json.dumps(Json_decoded['forecast'][i]['date']))	
+		i = DailyData(str(updatetime),Date,ForecastMaxTemp,ForecastMinTemp,Picto)
 		daylyforecastlist.append(i)
-
-	for i in range(0,4):
-		print(daylyforecastlist[i].ForecastMaxTemp)
-		print(daylyforecastlist[i].ForecastMinTemp)
-		print(daylyforecastlist[i].Picto)
-		print(daylyforecastlist[i].updatetime)
 
 	return daylyforecastlist
 
@@ -70,21 +67,21 @@ class WeatherDay(BoxLayout):
 		print('Init Mainlayout2')
 		self.dayweatherlist = dayweatherlist
 		Clock.schedule_once(self.update_dayweather, 0.5)
-		Clock.schedule_interval(self.update_dayweather, 5)
-
-		# with self.canvas.after:
-		# 	self.add_widget(Label(text='Bla',id='time'))
-		# 	self.add_widget(Label(text='Blo',id='picto'))
+		Clock.schedule_interval(self.update_dayweather, 600)
 
  	def update_dayweather(self, *args):
  		self.dayweatherlist = get_daily_weather(MBurl)
  		self.clear_widgets()
- 		self.add_widget(Label(text=str(self.dayweatherlist[self.dayid].Picto)))
+ 		self.add_widget(Label(text= str(self.dayweatherlist[self.dayid].Date))) 		
+ 		self.add_widget(Label(text='Temp Max: '+ str(self.dayweatherlist[self.dayid].ForecastMaxTemp)))
+ 		self.add_widget(Label(text='Temp Min: '+ str(self.dayweatherlist[self.dayid].ForecastMinTemp)))
+ 		self.add_widget(Label(text='Picto: '+ str(self.dayweatherlist[self.dayid].Picto))) 		
  		self.add_widget(Label(text=str(self.dayweatherlist[self.dayid].updatetime)))
 
 
 class DailyData(object):
-  def __init__(self,updatetime,ForecastMaxTemp, ForecastMinTemp, Picto):
+  def __init__(self,updatetime,Date, ForecastMaxTemp, ForecastMinTemp, Picto):
+	self.Date = Date 	
 	self.ForecastMaxTemp = ForecastMaxTemp
 	self.ForecastMinTemp = ForecastMinTemp
 	self.Picto = Picto
@@ -93,55 +90,14 @@ class DailyData(object):
 
 class KivyWeatherApp(App):
 
-
-# Standard sans self
-
 	def build(self):
+		Window.clearcolor = (0.2, 0.2, 0.2, 1)
 		self.dayweatherlist = get_daily_weather(MBurl)
 		self.mainlayout = MainLayout()
 		inspector.create_inspector(Window, self.mainlayout)
-		#Clock.schedule_interval(self.increase, 2)
 		return self.mainlayout
-
-	def increase(self,*arg):
-		print('updating')
-		dayweatherlist = get_daily_weather(MBurl)
-		#self.dayweatherlist = dayweatherlist	
-
-
-#Standard:
-# 
-# 	def build(self):
-# 		self.dayweatherlist = get_daily_weather(MBurl)
-# 		self.mainlayout = MainLayout()
-# 		inspector.create_inspector(Window, self.mainlayout)
-# 		Clock.schedule_interval(self.increase, 2)
-# 		return self.mainlayout
-# # 
-# 	def increase(self,*arg):
-# 		print('updating')
-# 		self.dayweatherlist = get_daily_weather(MBurl)
-
-
-# MainLayout2
-
-	# def build(self):
-	# 	DayWeatherList = get_daily_weather(MBurl)
-	# 	print('weather received')
-	# 	self.mainlayout = MainLayout2(DayWeatherList)
-	# 	print(type(self.mainlayout))
-	# 	#self.mainlayout = MainLayout()
-	# 	print('main layout Build done')
-	# 	print('one element in layout is :' + str(self.mainlayout.dayweatherlist[2].updatetime))
-	# 	inspector.create_inspector(Window, self.mainlayout)
-	# 	#Clock.schedule_interval(self.increase, 5)
-	# 	return self.mainlayout
-
-
-
-
-
 	
 
+	
 if __name__ == "__main__":
 	KivyWeatherApp().run()

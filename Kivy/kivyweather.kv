@@ -1,11 +1,20 @@
 
 <MainLayout>:
-	orientation: 'horizontal'
-	WeatherDay:
-		orientation:'vertical'
-		dayid:1
-		dayweatherlist: app.dayweatherlist
-	WeatherDay:
-		orientation:'vertical'
-		dayid:2
-		dayweatherlist: app.dayweatherlist
+	orientation: 'vertical'
+	BoxLayout:
+		size_hint:1,0.1
+	BoxLayout:
+		size_hint:1,0.9
+		WeatherDay:
+			orientation:'vertical'
+			dayid:0
+		WeatherDay:
+			orientation:'vertical'
+			dayid:1
+		WeatherDay:
+			orientation:'vertical'
+			dayid:2
+		WeatherDay:
+			orientation:'vertical'
+			dayid:3
+
