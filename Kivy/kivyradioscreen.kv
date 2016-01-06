@@ -1,0 +1,44 @@
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+MyScreenManager:
+    transition: FadeTransition()
+
+<RadioScreen>:
+    name:'RadioScreen'
+    BoxLayout:
+        BoxLayout:
+            orientation:'vertical'
+            Button:
+                size_hint:1,0.1  
+                on_release: 
+                    root.manager.transition= FadeTransition()
+                    root.manager.transition.duration = 1
+                    root.manager.current = root.manager.next()   
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint:1,0.9                  
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint:0.8,1
+                    RadioButton:
+                        stationid: 1
+                        stationname:'Station 1'
+                        background_color:[0.85,0.15,0.3,1]      
+                    RadioButton:
+                        stationname:'Station 2'
+                        stationid: 2
+                        background_color:[0.35,0.15,0.85,1]
+                    RadioButton:
+                        stationname:'Station 3'
+                        stationid: 3
+                        background_color:[0.35,0.85,0.15,1]    
+                BoxLayout:
+                    orientation:'vertical'
+                    size_hint:0.2,1
+                    VolumeSlider:
+                        id: VolumeSlider
+                        orientation:'vertical'
+                        size_hint:1,0.85
+                    Label:
+                        text: 'Volume %s' % int(VolumeSlider.value) if VolumeSlider.value else 'Off'
+                        size_hint:1,0.15

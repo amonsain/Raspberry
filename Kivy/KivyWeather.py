@@ -94,7 +94,7 @@ class WeatherDay(BoxLayout):
 		self.dayweatherlist = dayweatherlist
 		Clock.schedule_once(self.update_dayweather, 0.5)
 		Clock.schedule_interval(self.update_dayweather, 600)
-
+		# could create widgets from here, label them with an id: and update them in the following class method self.ids.idname = ...
  	def update_dayweather(self, *args):
  		self.dayweatherlist = get_daily_weather(MBurl)
  		self.clear_widgets()
