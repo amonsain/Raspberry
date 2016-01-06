@@ -52,7 +52,7 @@ class VolumeSlider(Slider):
 
 
 class RadioButton(ToggleButton):
-	icon = StringProperty(None)
+	#icon = StringProperty(None)
 	def __init__(self,stationid='',stationname='',*args,**kwargs):
 		super(RadioButton,self).__init__(*args,**kwargs)
 		self.stationid = stationid

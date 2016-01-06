@@ -57,30 +57,25 @@ def get_daily_weather(url):
 
 
 
+
+
 #***** Classes *******
 
 class MainLayout(BoxLayout):
 	pass
 		
 
-class WeatherDay(BoxLayout):
-	dayweatherlist = ListProperty(None)
-	def __init__(self,dayweatherlist='',dayid='',*args,**kwargs):
-		super(WeatherDay,self).__init__(*args,**kwargs)
-		print('Init Mainlayout2')
+
+
+class MainLayout2(BoxLayout):
+	#dayweatherlist = ListProperty(None)
+	def __init__(self,dayweatherlist=None,*args,**kwargs):
+		print('creating Mainlayout2')
+		super(MainLayout2,self).__init__(*args,**kwargs)
 		self.dayweatherlist = dayweatherlist
-		Clock.schedule_once(self.update_dayweather, 0.5)
-		Clock.schedule_interval(self.update_dayweather, 5)
 
-		# with self.canvas.after:
-		# 	self.add_widget(Label(text='Bla',id='time'))
-		# 	self.add_widget(Label(text='Blo',id='picto'))
-
- 	def update_dayweather(self, *args):
+ 	def update_layout(self, *args):
  		self.dayweatherlist = get_daily_weather(MBurl)
- 		self.clear_widgets()
- 		self.add_widget(Label(text=str(self.dayweatherlist[self.dayid].Picto)))
- 		self.add_widget(Label(text=str(self.dayweatherlist[self.dayid].updatetime)))
 
 
 class DailyData(object):
@@ -97,16 +92,19 @@ class KivyWeatherApp(App):
 # Standard sans self
 
 	def build(self):
-		self.dayweatherlist = get_daily_weather(MBurl)
+		dayweatherlist = get_daily_weather(MBurl)
 		self.mainlayout = MainLayout()
 		inspector.create_inspector(Window, self.mainlayout)
-		#Clock.schedule_interval(self.increase, 2)
+		Clock.schedule_interval(self.increase, 2)
 		return self.mainlayout
 
 	def increase(self,*arg):
 		print('updating')
 		dayweatherlist = get_daily_weather(MBurl)
-		#self.dayweatherlist = dayweatherlist	
+		self.mainlayout.monlabel1H.text = str(dayweatherlist[0].updatetime)
+		self.mainlayout.monlabel1P.text = str(dayweatherlist[0].Picto)
+		self.mainlayout.monlabel2H.text = str(dayweatherlist[1].updatetime)
+		self.mainlayout.monlabel2P.text = str(dayweatherlist[1].Picto)		
 
 
 #Standard:

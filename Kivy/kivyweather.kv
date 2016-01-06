@@ -1,5 +1,11 @@
 
 <MainLayout>:
 	orientation: 'horizontal'
-	Label:
-		text: 'Temperature Max Jour 1: ' + str(app.DayWeatherList[1].updatetime) + '°C'
+	WeatherDay:
+		orientation:'vertical'
+		dayid:1
+		dayweatherlist: app.dayweatherlist
+	WeatherDay:
+		orientation:'vertical'
+		dayid:2
+		dayweatherlist: app.dayweatherlist
