@@ -42,3 +42,29 @@ MyScreenManager:
                     Label:
                         text: 'Volume %s' % int(VolumeSlider.value) if VolumeSlider.value else 'Off'
                         size_hint:1,0.15
+
+
+<WeatherScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint:1,0.1  
+            Button:
+                on_release: 
+                    root.manager.transition= FadeTransition()
+                    root.manager.transition.duration = 1
+                    root.manager.current = root.manager.next() 
+        BoxLayout:
+            size_hint:1,0.9
+            WeatherDay:
+                orientation:'vertical'
+                dayid:0
+            WeatherDay:
+                orientation:'vertical'
+                dayid:1
+            WeatherDay:
+                orientation:'vertical'
+                dayid:2
+            WeatherDay:
+                orientation:'vertical'
+                dayid:3

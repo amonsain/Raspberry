@@ -15,7 +15,6 @@ from kivy.properties import StringProperty
 from kivy.properties import ListProperty
 from kivy.modules import inspector
 from kivy.clock import Clock
-from kivy.graphics.svg import Svg
 
 import time
 import urllib
