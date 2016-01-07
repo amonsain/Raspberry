@@ -16,11 +16,14 @@ from kivy.properties import ListProperty
 from kivy.modules import inspector
 from kivy.clock import Clock
 
-import time
+from time import gmtime, strftime, localtime
 import urllib
 import subprocess
 import json
 import datetime
+import locale
+
+locale.setlocale(locale.LC_ALL, 'fr_FR')
 
 # Clock Example for data update http://stackoverflow.com/questions/18923321/making-a-clock-in-kivy
 # http://stackoverflow.com/questions/27213545/update-properties-of-a-kivy-widget-while-running-code
@@ -29,27 +32,8 @@ MBurl='http://my.meteoblue.com/dataApi/dispatch.pl?apikey=41f2dd49fb6a&mac=feed&
 
 
 
-def get_daily_weather_stub(url):
-
-
-# Get Weather Fake
-	updatetime = time = datetime.datetime.now()
-	daylyforecastlist = []
-	for i in range(0,5):
-		ForecastMaxTemp = 'A'+str(i)
-		ForecastMinTemp = 'B'+str(i)
-		Picto = i
-		Date = str(i)
-		i = DailyData(str(updatetime),Date,ForecastMaxTemp,ForecastMinTemp,Picto)
-		daylyforecastlist.append(i)
-
-	return daylyforecastlist
-
-
-
-
 def get_daily_weather(url):
-# Get weather info from MeteoBlue's API
+# Get daily weather info from MeteoBlue's API (all available upcoming days)
 # Fetch URL, parse & return a list of DaylyData objects
 
   #retour_api_meteo = urllib.request.urlopen(url)  --- only for Python3
@@ -61,15 +45,49 @@ def get_daily_weather(url):
 # Get Weather data from Json structure
 	updatetime = time = datetime.datetime.now()
 	daylyforecastlist = []
-	for i in range(0,len(Json_decoded['forecast'])):
+	for i in range(0,4):
+		Date = str(json.dumps(Json_decoded['forecast'][i]['date']))
 		ForecastMaxTemp = json.dumps(Json_decoded['forecast'][i]['temperature_max'])
 		ForecastMinTemp = json.dumps(Json_decoded['forecast'][i]['temperature_min'])
+		MaxTempColor = hex_to_rgb(json.dumps(Json_decoded['forecast'][i]['temperature_max_color']))
+		MinTempColor = hex_to_rgb(json.dumps(Json_decoded['forecast'][i]['temperature_min_color']))
+		WindSpeed = json.dumps(Json_decoded['forecast'][i]['wind_speed_max'])
+		WindDir = json.dumps(Json_decoded['forecast'][i]['wind_direction_dominant'])
+		WinMax = json.dumps(Json_decoded['forecast'][i]['wind_gust_max'])
+		Uv = json.dumps(Json_decoded['forecast'][i]['uv_index'])
+		UvColor = hex_to_rgb(json.dumps(Json_decoded['forecast'][i]['uv_color']))
+		RainProb = json.dumps(Json_decoded['forecast'][i]['precipitation_probability'])
+		RainMm = json.dumps(Json_decoded['forecast'][i]['precipitation_amount'])
 		Picto = int(json.dumps(Json_decoded['forecast'][i]['pictocode_day']))
-		Date = str(json.dumps(Json_decoded['forecast'][i]['date']))
-		i = DailyData(str(updatetime),Date,ForecastMaxTemp,ForecastMinTemp,Picto)
+		i = DailyData(Date,ForecastMaxTemp,MaxTempColor,ForecastMinTemp,MinTempColor,WindSpeed,WindDir,WinMax,Uv,UvColor,RainProb,RainMm,Picto)
 		daylyforecastlist.append(i)
 
 	return daylyforecastlist
+
+
+def get_current_weather(url):
+# Get current weather info from MeteoBlue's API
+# Fetch URL, parse & return a list of DaylyData objects
+
+  #retour_api_meteo = urllib.request.urlopen(url)  --- only for Python3
+
+	retour_api_meteo = urllib.urlopen(url)
+	Json_string = retour_api_meteo.read().decode('utf-8')
+	Json_decoded = json.loads(Json_string)
+
+# Get Weather data from Json structure
+	updatetime = 'Mise a jour: '+ strftime("%d %b %H:%M", localtime())
+	CurrentTemp = json.dumps(Json_decoded['current']['temperature'])
+	Picto = int(json.dumps(Json_decoded['current']['pictocode']))
+	Sunrise = json.dumps(Json_decoded['forecast'][0]['sunrise_time'])
+	Sunset = json.dumps(Json_decoded['forecast'][0]['sunset_time'])
+	Pressure = json.dumps(Json_decoded['forecast'][0]['pressure_hpa'])
+	IsDaylight =  json.dumps(Json_decoded['current']['is_daylight'])
+	currentweather = CurrentData(updatetime,CurrentTemp,Sunrise,Sunset,Pressure,IsDaylight, Picto)
+
+	return currentweather
+
+
 
 
 def get_weathericon(id):
@@ -79,10 +97,40 @@ def get_weathericon(id):
 	return iconname
 
 
+def hex_to_rgb(value):
+  value = value.lstrip('"#')
+  value = value.rstrip('"')
+  #print(value)
+  lv = len(value)
+  #print(lv)
+  return tuple(int(value[i:int(i+lv/3)], 16) for i in range(0, lv, int(lv/3)))
+
 #***** Classes *******
+
 
 class MainLayout(BoxLayout):
 	pass
+
+
+#****** Current wather + moon/UV Sunset info about today
+
+class WeatherCurrent(BoxLayout):
+	dayweatherlist = ListProperty(None)
+
+	def __init__(self,currentweather='',*args,**kwargs):
+		super(WeatherCurrent,self).__init__(*args,**kwargs)
+		print('create WeatherCurrent')
+		self.textcolor=[0.2,0.5,0.9,1]
+		self.currentweather = currentweather
+		Clock.schedule_once(self.update, 0.5)
+		Clock.schedule_interval(self.update, 1800)
+		# could create widgets from here, label them with an id: and update them in the following class method self.ids.idname = ...
+ 	def update(self, *args):
+		self.currentweather = get_current_weather(MBurl)
+ 		self.clear_widgets()
+ 		self.add_widget(Label(text='Current Temp: '+ str(self.currentweather.CurrentTemp),color=self.textcolor))
+ 		self.add_widget(Label(text=str(self.currentweather.updatetime),color=self.textcolor))
+ 		self.add_widget(Image(source=get_weathericon(self.currentweather.Picto)))
 
 
 class WeatherDay(BoxLayout):
@@ -90,33 +138,56 @@ class WeatherDay(BoxLayout):
 	def __init__(self,dayweatherlist='',dayid='',*args,**kwargs):
 		super(WeatherDay,self).__init__(*args,**kwargs)
 		print('create WeatherDay')
+		self.textcolor=[0.2,0.5,0.9,1]
 		self.dayweatherlist = dayweatherlist
-		Clock.schedule_once(self.update_dayweather, 0.5)
-		Clock.schedule_interval(self.update_dayweather, 600)
+		Clock.schedule_once(self.update, 0.5)
+		Clock.schedule_interval(self.update, 7200)
 		# could create widgets from here, label them with an id: and update them in the following class method self.ids.idname = ...
- 	def update_dayweather(self, *args):
+ 	def update(self, *args):
  		self.dayweatherlist = get_daily_weather(MBurl)
  		self.clear_widgets()
- 		self.add_widget(Label(text= str(self.dayweatherlist[self.dayid].Date)))
- 		self.add_widget(Label(text='Temp Max: '+ str(self.dayweatherlist[self.dayid].ForecastMaxTemp)))
- 		self.add_widget(Label(text='Temp Min: '+ str(self.dayweatherlist[self.dayid].ForecastMinTemp)))
+ 		self.add_widget(Label(text='Jour' +str(self.dayweatherlist[self.dayid].Date),color=self.textcolor))
  		self.add_widget(Image(source=get_weathericon(self.dayweatherlist[self.dayid].Picto)))
- 		self.add_widget(Label(text=str(self.dayweatherlist[self.dayid].updatetime)))
+ 		self.add_widget(Label(text='Maxi: '+ str(self.dayweatherlist[self.dayid].ForecastMaxTemp),color=self.textcolor))
+ 		self.add_widget(Label(text='Mini: '+ str(self.dayweatherlist[self.dayid].ForecastMinTemp),color=self.textcolor))
+
+
+
 
 
 class DailyData(object):
-  def __init__(self,updatetime,Date, ForecastMaxTemp, ForecastMinTemp, Picto):
+  def __init__(self,Date, ForecastMaxTemp,MaxTempColor,ForecastMinTemp,MinTempColor,WindSpeed,WindDir,WindMax,Uv, UvColor,RainProb,RainMm,Picto):
 	self.Date = Date
 	self.ForecastMaxTemp = ForecastMaxTemp
+	self.MaxTempColor = MaxTempColor
 	self.ForecastMinTemp = ForecastMinTemp
+	self.MinTempColor = MinTempColor
+	self.WindSpeed = WindSpeed
+	self.WindDir = WindDir
+	self.WindMax = WindMax
+	self.Uv = Uv
+	self.UvColor = UvColor
+	self.RainProb = RainProb
+	self.RainMm = RainMm
 	self.Picto = Picto
+
+
+class CurrentData(object):
+  def __init__(self,updatetime,CurrentTemp,Sunrise,Sunset,Pressure,IsDaylight, Picto):
 	self.updatetime = updatetime
+	self.CurrentTemp = CurrentTemp
+	self.Picto = Picto
+	self.Sunrise = Sunrise
+	self.Sunset = Sunset
+	self.Pressure = Pressure
+	self.IsDaylight = IsDaylight
 
 
 class KivyWeatherApp(App):
 
 	def build(self):
-		Window.clearcolor = (0.2, 0.2, 0.2, 1)
+		print('Program start at:', strftime("%a, %d %b %Y %H:%M:%S", localtime()))
+		Window.clearcolor = (0.95, 0.95, 0.95, 1)
 		self.mainlayout = MainLayout()
 		inspector.create_inspector(Window, self.mainlayout)
 		return self.mainlayout
