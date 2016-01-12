@@ -15,6 +15,7 @@ from kivy.properties import StringProperty
 from kivy.properties import ListProperty
 from kivy.modules import inspector
 from kivy.clock import Clock
+from kivy.graphics import Color, Rectangle
 
 from time import gmtime, strftime, localtime
 import urllib
@@ -92,8 +93,8 @@ def get_current_weather(url):
 
 def get_weathericon(id):
 	if id < 10:
-		iconname = './pictogramssvg/'+'0'+str(id)+'_day.svg.png'
-	else: iconname = './pictogramssvg/'+str(id)+'_day.svg.png'
+		iconname = './pictogramssvg/'+'0'+str(id)+'_night.svg.png'
+	else: iconname = './pictogramssvg/'+str(id)+'_night.svg.png'
 	return iconname
 
 
@@ -125,12 +126,12 @@ class WeatherCurrent(BoxLayout):
 		Clock.schedule_once(self.update, 0.5)
 		Clock.schedule_interval(self.update, 1800)
 		# could create widgets from here, label them with an id: and update them in the following class method self.ids.idname = ...
- 	def update(self, *args):
+	def update(self, *args):
 		self.currentweather = get_current_weather(MBurl)
- 		self.clear_widgets()
- 		self.add_widget(Label(text='Current Temp: '+ str(self.currentweather.CurrentTemp),color=self.textcolor))
- 		self.add_widget(Label(text=str(self.currentweather.updatetime),color=self.textcolor))
- 		self.add_widget(Image(source=get_weathericon(self.currentweather.Picto)))
+		self.clear_widgets()
+		self.add_widget(Label(text='Current Temp: '+ str(self.currentweather.CurrentTemp),color=self.textcolor))
+		self.add_widget(Label(text=str(self.currentweather.updatetime),color=self.textcolor))
+		self.add_widget(Image(source=get_weathericon(self.currentweather.Picto)))
 
 
 class WeatherDay(BoxLayout):
@@ -142,14 +143,17 @@ class WeatherDay(BoxLayout):
 		self.dayweatherlist = dayweatherlist
 		Clock.schedule_once(self.update, 0.5)
 		Clock.schedule_interval(self.update, 7200)
+
+
+
 		# could create widgets from here, label them with an id: and update them in the following class method self.ids.idname = ...
- 	def update(self, *args):
- 		self.dayweatherlist = get_daily_weather(MBurl)
- 		self.clear_widgets()
- 		self.add_widget(Label(text='Jour' +str(self.dayweatherlist[self.dayid].Date),color=self.textcolor))
- 		self.add_widget(Image(source=get_weathericon(self.dayweatherlist[self.dayid].Picto)))
- 		self.add_widget(Label(text='Maxi: '+ str(self.dayweatherlist[self.dayid].ForecastMaxTemp),color=self.textcolor))
- 		self.add_widget(Label(text='Mini: '+ str(self.dayweatherlist[self.dayid].ForecastMinTemp),color=self.textcolor))
+	def update(self, *args):
+		self.dayweatherlist = get_daily_weather(MBurl)
+		self.clear_widgets()
+		self.add_widget(Label(text='Jour' +str(self.dayweatherlist[self.dayid].Date),color=self.textcolor))
+		self.add_widget(Image(source=get_weathericon(self.dayweatherlist[self.dayid].Picto)))
+		self.add_widget(Label(text='Maxi: '+ str(self.dayweatherlist[self.dayid].ForecastMaxTemp),color=self.textcolor))
+		self.add_widget(Label(text='Mini: '+ str(self.dayweatherlist[self.dayid].ForecastMinTemp),color=self.textcolor))
 
 
 
@@ -187,7 +191,7 @@ class KivyWeatherApp(App):
 
 	def build(self):
 		print('Program start at:', strftime("%a, %d %b %Y %H:%M:%S", localtime()))
-		Window.clearcolor = (0.95, 0.95, 0.95, 1)
+		Window.clearcolor = (0.98, 0.98, 0.98, 1)
 		self.mainlayout = MainLayout()
 		inspector.create_inspector(Window, self.mainlayout)
 		return self.mainlayout
