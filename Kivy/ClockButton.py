@@ -10,10 +10,12 @@ class ClockButton(Button):
 
 	def __init__(self,*args,**kwargs):
 		super(ClockButton,self).__init__(*args,**kwargs)
-		Clock.schedule_interval(self.update, 1)
+		Clock.schedule_interval(self.update, 15)
 
 	def update(self, *args):
-		self.text = '[b]'+ strftime("%d %b %H:%M:%S", localtime())+'[/b]'
+		self.text = '[b]'+ strftime("%A %d %B %H:%M", localtime())+'[/b]'
+		self.font_size = 40
 		self.markup=True
-		self.color = [0.2,0.5,0.9,1]
+		self.color = [1,1,1,1]
+		self.background_color=[0.1,0.55,0.55,1]
 		print(self.text)

@@ -60,21 +60,21 @@ class VolumeSlider(Slider):
 
 class RadioButton(ToggleButton):
 	#icon = StringProperty(None)
-	def __init__(self,stationid='',stationname='',*args,**kwargs):
+	def __init__(self,stationid='',stationname='',textcolor='',*args,**kwargs):
 		super(RadioButton,self).__init__(*args,**kwargs)
 		self.stationid = stationid
 		self.stationname = stationname
+		self.textcolor = textcolor
 		self.group='Station'
 		with self.canvas.after:
 			self.radiobox = BoxLayout(orientation='horizontal')
-			self.radiobuttonlabel = Label(font_size=40,size_hint=[0.8,1])
+			self.radiobuttonlabel = Label(font_size=60,size_hint=[0.8,1],markup=True,color=self.textcolor)
 			self.radiobuttonimage = Image(source='./images/playbuttonwhite.png',size_hint=[0.2,1])			
 			self.radiobox.add_widget(self.radiobuttonlabel)
 			self.radiobox.add_widget(self.radiobuttonimage)	
 			self.add_widget(self.radiobox)
 			self.background_normal = ''
 			self.background_down = ''
-			self.background_color = [1,1,1,1]
 
 		self.bind(pos=self.update_radiobox,size=self.update_radiobox)
 		self.bind(state=self.update_state)
@@ -82,7 +82,10 @@ class RadioButton(ToggleButton):
 	def update_radiobox(self,*args):
 		self.radiobox.pos = self.pos
 		self.radiobox.size = self.size
-		self.radiobuttonlabel.text = str(self.stationname)
+		self.radiobuttonlabel.text = '[b]'+str(self.stationname)+'[/b]'
+		self.radiobuttonlabel.color = self.textcolor
+		self.background_color =[0.7,0.7,0.7,1]		
+
 
 
 	def update_state(self,*args):

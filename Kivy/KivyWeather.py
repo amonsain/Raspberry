@@ -145,7 +145,7 @@ class WeatherCurrent(BoxLayout):
 	def __init__(self,currentweather='',*args,**kwargs):
 		super(WeatherCurrent,self).__init__(*args,**kwargs)
 		print('create WeatherCurrent')
-		self.textcolor=[0.2,0.5,0.9,1]
+		self.textcolor=[0.1,0.55,0.55,1]
 		self.currentweather = currentweather
 		Clock.schedule_once(self.update, 0.5)
 		Clock.schedule_interval(self.update, CurrentUpdatePeriod)
@@ -172,7 +172,7 @@ class WeatherDay(BoxLayout):
 	def __init__(self,dayweatherlist='',dayid='',*args,**kwargs):
 		super(WeatherDay,self).__init__(*args,**kwargs)
 		print('create WeatherDay')
-		self.textcolor=[0.2,0.5,0.9,1]
+		self.textcolor=[0.1,0.55,0.55,1]
 		self.dayweatherlist = dayweatherlist
 		Clock.schedule_once(self.update, 0.5)
 		Clock.schedule_interval(self.update, ForecastUpdatePeriod)
