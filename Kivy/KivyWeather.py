@@ -163,7 +163,7 @@ class WeatherCurrent(BoxLayout):
 		self.add_widget(Label(text='Lever:  '+ str(self.currentweather.Sunrise),color=self.textcolor,size_hint=[1,0.1]))
 		self.add_widget(Label(text='Coucher:  '+ str(self.currentweather.Sunset),color=self.textcolor,size_hint=[1,0.1]))
 		self.add_widget(BoxLayout(size_hint=[1,0.1]))
-		self.add_widget(Label(text=str(self.currentweather.updatetime),color=self.textcolor))
+		#self.add_widget(Label(text=str(self.currentweather.updatetime),color=self.textcolor))
 
 
 
