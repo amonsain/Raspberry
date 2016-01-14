@@ -69,7 +69,7 @@ MyScreenManager:
                 size: self.size
         BoxLayout:
             size_hint:1,0.1  
-            Button:
+            ClockButton:
                 on_release: 
                     root.manager.transition= WipeTransition()
                     root.manager.transition.duration = 1

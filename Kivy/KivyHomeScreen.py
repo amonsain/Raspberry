@@ -7,7 +7,7 @@ from KivyWeather import *
 from ClockButton import ClockButton
 import locale
 
-locale.setlocale(locale.LC_ALL, 'fr_FR')
+#locale.setlocale(locale.LC_ALL, 'fr_FR')
 
 class MyScreenManager(ScreenManager):
     pass
