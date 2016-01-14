@@ -24,7 +24,7 @@ import json
 import datetime
 import locale
 
-locale.setlocale(locale.LC_ALL, 'fr_FR')
+#locale.setlocale(locale.LC_ALL, 'fr_FR')
 
 # Clock Example for data update http://stackoverflow.com/questions/18923321/making-a-clock-in-kivy
 # http://stackoverflow.com/questions/27213545/update-properties-of-a-kivy-widget-while-running-code
@@ -114,8 +114,8 @@ def get_weathericon(id,icontype,is_daylight):
 	if icontype == 'daily':
 
 		if id < 10:
-			iconname = './pictogramssvg/'+'0'+str(id)+daynightstring
-		else: iconname = './pictogramssvg/'+str(id)+daynightstring
+			iconname = './pictogramssvg/'+'0'+str(id)+'_iday.svg.png'
+		else: iconname = './pictogramssvg/'+str(id)+'_iday.svg.png'
 
 	return iconname
 

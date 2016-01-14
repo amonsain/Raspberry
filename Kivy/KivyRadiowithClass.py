@@ -29,10 +29,17 @@ def toggle_radio(state,channel):
 
 def change_volume(level):
 	print('Change volume' + str(level))
-	#subprocess.check_output(["mpc","volume",str(level)])
+	volume_input = level
+	if volume_input==0:
+		compensated_volume=0
+	else: compensated_volume=70+volume_input*30/100
+	#subprocess.check_output(["mpc","volume",str(compensated_volume)])
 
 
 def init_radio():
+	#subprocess.check_output(["mpc","clear"])
+	#subprocess.check_output(["mpc","load","kivyplaylist"])
+	#subprocess.check_output(["mpc","volume",str(75)])
 	pass
 
 # ***** Classes *******
