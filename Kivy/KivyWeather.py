@@ -47,13 +47,20 @@ def get_daily_weather(url):
 	updatetime = time = datetime.datetime.now()
 	daylyforecastlist = []
 	for i in range(0,4):
-		Date = str(json.dumps(Json_decoded['forecast'][i]['date']))
+		Dateraw = str(json.dumps(Json_decoded['forecast'][i]['date']))
+		Date = Dateraw[9:11]+'-'+Dateraw[6:9]+Dateraw[1:5]
 		ForecastMaxTemp = json.dumps(Json_decoded['forecast'][i]['temperature_max'])
 		ForecastMinTemp = json.dumps(Json_decoded['forecast'][i]['temperature_min'])
-		MaxTempColor = hex_to_rgb(json.dumps(Json_decoded['forecast'][i]['temperature_max_color']))
-		MinTempColor = hex_to_rgb(json.dumps(Json_decoded['forecast'][i]['temperature_min_color']))
+		MaxTempColorraw = hex_to_rgb(json.dumps(Json_decoded['forecast'][i]['temperature_max_color']))
+		MinTempColorraw = hex_to_rgb(json.dumps(Json_decoded['forecast'][i]['temperature_min_color']))
+		MaxTempColor = list(MaxTempColorraw)
+		MaxTempColor.append(1)
+		MinTempColor = list(MinTempColorraw)
+		MinTempColor.append(1)
+
 		WindSpeed = json.dumps(Json_decoded['forecast'][i]['wind_speed_max'])
-		WindDir = json.dumps(Json_decoded['forecast'][i]['wind_direction_dominant'])
+		WindDirraw = json.dumps(Json_decoded['forecast'][i]['wind_direction_dominant'])
+		WindDir = WindDirraw[1:-1]
 		WinMax = json.dumps(Json_decoded['forecast'][i]['wind_gust_max'])
 		Uv = json.dumps(Json_decoded['forecast'][i]['uv_index'])
 		UvColor = hex_to_rgb(json.dumps(Json_decoded['forecast'][i]['uv_color']))
@@ -80,9 +87,11 @@ def get_current_weather(url):
 	updatetime = 'Mise a jour: '+ strftime("%d %b %H:%M", localtime())
 	CurrentTemp = json.dumps(Json_decoded['current']['temperature'])
 	Picto = int(json.dumps(Json_decoded['current']['pictocode']))
-	Sunrise = json.dumps(Json_decoded['forecast'][0]['sunrise_time'])
-	Sunset = json.dumps(Json_decoded['forecast'][0]['sunset_time'])
+	Sunriseraw = json.dumps(Json_decoded['forecast'][0]['sunrise_time'])
+	Sunsetraw = json.dumps(Json_decoded['forecast'][0]['sunset_time'])
 	Pressure = json.dumps(Json_decoded['forecast'][0]['pressure_hpa'])
+	Sunset = Sunsetraw[1:3]+' h '+Sunsetraw[4:6]
+	Sunrise = Sunriseraw[1:3]+' h '+Sunriseraw[4:6]
 	IsDaylight =  json.dumps(Json_decoded['current']['is_daylight'])
 	currentweather = CurrentData(updatetime,CurrentTemp,Sunrise,Sunset,Pressure,IsDaylight, Picto)
 
@@ -91,10 +100,23 @@ def get_current_weather(url):
 
 
 
-def get_weathericon(id):
-	if id < 10:
-		iconname = './pictogramssvg/'+'0'+str(id)+'_night.svg.png'
-	else: iconname = './pictogramssvg/'+str(id)+'_night.svg.png'
+def get_weathericon(id,icontype,is_daylight):
+
+	if is_daylight =='1':
+		daynightstring = '_day.svg.png'
+	else: daynightstring = '_night.svg.png'
+
+	if icontype == 'forecast':
+		if id < 10:
+			iconname = './pictogramssvg/'+'0'+str(id)+daynightstring
+		else: iconname = './pictogramssvg/'+str(id)+daynightstring
+
+	if icontype == 'daily':
+
+		if id < 10:
+			iconname = './pictogramssvg/'+'0'+str(id)+daynightstring
+		else: iconname = './pictogramssvg/'+str(id)+daynightstring
+
 	return iconname
 
 
@@ -113,7 +135,7 @@ class MainLayout(BoxLayout):
 	pass
 
 
-#****** Current wather + moon/UV Sunset info about today
+#****** Current weather + moon/UV Sunset info about today
 
 class WeatherCurrent(BoxLayout):
 	dayweatherlist = ListProperty(None)
@@ -125,13 +147,22 @@ class WeatherCurrent(BoxLayout):
 		self.currentweather = currentweather
 		Clock.schedule_once(self.update, 0.5)
 		Clock.schedule_interval(self.update, 1800)
+
 		# could create widgets from here, label them with an id: and update them in the following class method self.ids.idname = ...
 	def update(self, *args):
 		self.currentweather = get_current_weather(MBurl)
 		self.clear_widgets()
-		self.add_widget(Label(text='Current Temp: '+ str(self.currentweather.CurrentTemp),color=self.textcolor))
-		self.add_widget(Label(text=str(self.currentweather.updatetime),color=self.textcolor))
-		self.add_widget(Image(source=get_weathericon(self.currentweather.Picto)))
+		self.add_widget(Label(text='Actuellement',color=self.textcolor,size_hint=[1,0.12]))
+		self.add_widget(Image(source=get_weathericon(self.currentweather.Picto,'daily',self.currentweather.IsDaylight),size_hint=[1,0.4]))	
+		self.add_widget(BoxLayout(size_hint=[1,0.01]))	
+		self.add_widget(Label(text='Temperature : '+ str(self.currentweather.CurrentTemp)+' degres',color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(Label(text='Pression: '+ str(self.currentweather.Pressure)+' hPa',color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(BoxLayout(size_hint=[1,0.1]))
+		self.add_widget(Label(text='Lever:  '+ str(self.currentweather.Sunrise),color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(Label(text='Coucher:  '+ str(self.currentweather.Sunset),color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(BoxLayout(size_hint=[1,0.1]))
+		#self.add_widget(Label(text=str(self.currentweather.updatetime),color=self.textcolor))
+
 
 
 class WeatherDay(BoxLayout):
@@ -143,17 +174,23 @@ class WeatherDay(BoxLayout):
 		self.dayweatherlist = dayweatherlist
 		Clock.schedule_once(self.update, 0.5)
 		Clock.schedule_interval(self.update, 7200)
-
-
-
 		# could create widgets from here, label them with an id: and update them in the following class method self.ids.idname = ...
 	def update(self, *args):
 		self.dayweatherlist = get_daily_weather(MBurl)
 		self.clear_widgets()
-		self.add_widget(Label(text='Jour' +str(self.dayweatherlist[self.dayid].Date),color=self.textcolor))
-		self.add_widget(Image(source=get_weathericon(self.dayweatherlist[self.dayid].Picto)))
-		self.add_widget(Label(text='Maxi: '+ str(self.dayweatherlist[self.dayid].ForecastMaxTemp),color=self.textcolor))
-		self.add_widget(Label(text='Mini: '+ str(self.dayweatherlist[self.dayid].ForecastMinTemp),color=self.textcolor))
+		self.add_widget(Label(text=str(self.dayweatherlist[self.dayid].Date),color=self.textcolor,size_hint=[1,0.2]))
+		self.add_widget(Image(source=get_weathericon(self.dayweatherlist[self.dayid].Picto,'forecast','1'),size_hint=[1,0.3]))
+		self.add_widget(BoxLayout(size_hint=[1,0.1]))		
+		self.add_widget(Label(text='[b]'+'Temperatures '+ '[/b]', markup=True,color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(Label(text='Maxi: '+ str(self.dayweatherlist[self.dayid].ForecastMaxTemp),color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(Label(text='Mini: '+ str(self.dayweatherlist[self.dayid].ForecastMinTemp),color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(BoxLayout(size_hint=[1,0.1]))
+		self.add_widget(Label(text='[b]'+'Vent '+ '[/b]', markup=True,color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(Label(text=str(self.dayweatherlist[self.dayid].WindDir)+'   '+ str(self.dayweatherlist[self.dayid].WindSpeed)+' km/h',color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(Label(text='Rafales: '+ str(self.dayweatherlist[self.dayid].WindMax),color=self.textcolor,size_hint=[1,0.1]))
+		self.add_widget(BoxLayout(size_hint=[1,0.1]))
+		self.add_widget(Label(text='Indice UV: '+ str(self.dayweatherlist[self.dayid].Uv),color=self.textcolor,size_hint=[1,0.2]))
+		self.add_widget(Label(text='Pluie: '+ str(self.dayweatherlist[self.dayid].RainMm)+'mm, '+str(self.dayweatherlist[self.dayid].RainProb)+ '%',color=self.textcolor,size_hint=[1,0.2]))
 
 
 
@@ -191,7 +228,7 @@ class KivyWeatherApp(App):
 
 	def build(self):
 		print('Program start at:', strftime("%a, %d %b %Y %H:%M:%S", localtime()))
-		Window.clearcolor = (0.98, 0.98, 0.98, 1)
+		Window.clearcolor = (1, 1, 1, 1)
 		self.mainlayout = MainLayout()
 		inspector.create_inspector(Window, self.mainlayout)
 		return self.mainlayout
