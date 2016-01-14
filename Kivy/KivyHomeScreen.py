@@ -4,7 +4,10 @@ from kivy.modules import inspector
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition, FallOutTransition
 from KivyRadio import *
 from KivyWeather import *
+from ClockButton import ClockButton
+import locale
 
+locale.setlocale(locale.LC_ALL, 'fr_FR')
 
 class MyScreenManager(ScreenManager):
     pass

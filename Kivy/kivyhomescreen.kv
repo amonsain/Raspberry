@@ -1,8 +1,8 @@
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import WipeTransition kivy.uix.screenmanager.WipeTransition
 
 MyScreenManager:
-    transition: FadeTransition()
-
+    transition: WipeTransition()
 <RadioScreen>:
     name:'RadioScreen'
     BoxLayout:
@@ -13,12 +13,12 @@ MyScreenManager:
             Rectangle:
                 pos: self.pos
                 size: self.size
-        Button:
-            size_hint:1,0.1  
+        ClockButton:
+            size_hint:1,0.1
             on_release: 
-                root.manager.transition= FadeTransition()
+                root.manager.transition= WipeTransition()
                 root.manager.transition.duration = 1
-                root.manager.current = root.manager.next()   
+                root.manager.current = root.manager.next()
         BoxLayout:
             size_hint:1,0.9  
             orientation:'horizontal'
@@ -55,6 +55,7 @@ MyScreenManager:
                 Label:
                     text: 'Volume %s' % int(VolumeSlider.value) if VolumeSlider.value else 'Off'
                     size_hint:1,0.15
+                    color: [0.6,0.6,0.6,1] 
 
 
 <WeatherScreen>:
@@ -70,7 +71,7 @@ MyScreenManager:
             size_hint:1,0.1  
             Button:
                 on_release: 
-                    root.manager.transition= FadeTransition()
+                    root.manager.transition= WipeTransition()
                     root.manager.transition.duration = 1
                     root.manager.current = root.manager.next() 
         BoxLayout:

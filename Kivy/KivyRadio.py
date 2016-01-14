@@ -65,9 +65,6 @@ class RadioButton(ToggleButton):
 		self.stationid = stationid
 		self.stationname = stationname
 		self.group='Station'
-
-
-
 		with self.canvas.after:
 			self.radiobox = BoxLayout(orientation='horizontal')
 			self.radiobuttonlabel = Label(font_size=40,size_hint=[0.8,1])
