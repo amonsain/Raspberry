@@ -1,4 +1,3 @@
-#:import FadeTransition kivy.uix.screenmanager.FadeTransition
 #:import WipeTransition kivy.uix.screenmanager.WipeTransition
 
 MyScreenManager:
@@ -83,8 +82,14 @@ MyScreenManager:
                     id: VolumeSlider
                     orientation:'vertical'
                     size_hint:1,0.85
+                    canvas.after:
+                        Rectangle:
+                            pos:self.center_x - 135, self.value_pos[1]-160
+                            size: (sp(150), sp(150))
+                            source:'./images/VolumeButton.png'
                 Label:
-                    text: 'Volume %s' % int(VolumeSlider.value) if VolumeSlider.value else 'Off'
+                    text: '[b]'+'Volume %s' % int(VolumeSlider.value)+'[/b]' if VolumeSlider.value else '[b]'+'OFF'+'[/b]' 
+                    markup:True
                     size_hint:1,0.15
                     color: [1,1,1,1] 
 
@@ -105,6 +110,7 @@ MyScreenManager:
                     root.manager.transition= WipeTransition()
                     root.manager.transition.duration = 1
                     root.manager.current = root.manager.next() 
+                    root.manager.delayedswitch() 
         BoxLayout:
             size_hint:1,0.9
             canvas.before:

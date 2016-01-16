@@ -10,7 +10,14 @@ import locale
 #locale.setlocale(locale.LC_ALL, 'fr_FR')
 
 class MyScreenManager(ScreenManager):
-    pass
+
+	def delayedswitch(self):
+		Clock.schedule_once(self.switchtoweather,30)
+		print('schedule switch back to Weather screen in 30 sec.')
+
+	def switchtoweather(self,*args):
+		self.current = 'WeatherScreen'
+
 
 class RadioScreen(Screen):
 	pass
@@ -22,15 +29,15 @@ class WeatherScreen(Screen):
 ####### MAIN
 
 class KivyHomeScreenApp(App):
-	#source = StringProperty()
 
 	def build(self):
-		mainlayout = MyScreenManager()
+		self.mainlayout = MyScreenManager()
 		init_radio()
-		mainlayout.add_widget(RadioScreen(name='Radio'))
-		mainlayout.add_widget(WeatherScreen(name='Weather'))
-		inspector.create_inspector(Window, mainlayout)
-		return mainlayout
+		self.mainlayout.add_widget(RadioScreen(name='RadioScreen'))
+		self.mainlayout.add_widget(WeatherScreen(name='WeatherScreen'))
+		inspector.create_inspector(Window, self.mainlayout)
+		return self.mainlayout
+
 
 if __name__ == "__main__":
 	KivyHomeScreenApp().run()
