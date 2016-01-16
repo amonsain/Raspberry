@@ -3,6 +3,7 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from time import gmtime, strftime, localtime
 import locale
+from string import capitalize
 
 locale.setlocale(locale.LC_ALL, 'fr_FR')
 
@@ -13,7 +14,7 @@ class ClockButton(Button):
 		Clock.schedule_interval(self.update, 15)
 
 	def update(self, *args):
-		self.text = '[b]'+ strftime("%A %d %B %H:%M", localtime())+'[/b]'
+		self.text = strftime("%A %d %B %H:%M", localtime()).capitalize()
 		self.font_size = 40
 		self.markup=True
 		self.color = [1,1,1,1]
